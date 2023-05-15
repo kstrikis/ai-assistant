@@ -39,6 +39,7 @@ A multi-user web application designed for students and teachers, which enables s
 3. Create a `.env` file in the root directory and fill in the required environment variables:
 
    ```
+   SESSION_SECRET=generate_a_uuid_and_put_here
    DATABASE_URL=ai-assistant_development
    OPENAI_API_KEY=your_openai_api_key
    ```
