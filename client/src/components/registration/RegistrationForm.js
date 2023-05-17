@@ -9,6 +9,7 @@ const RegistrationForm = () => {
     email: "",
     password: "",
     passwordConfirmation: "",
+    role: "student"
   });
 
   const [errors, setErrors] = useState({});
@@ -133,6 +134,13 @@ const RegistrationForm = () => {
               onChange={onInputChange}
             />
             <FormError error={errors.passwordConfirmation} />
+          </label>
+        </div>
+        <div>
+          <label>
+            Role
+            <input type="text" name="role" value={userPayload.role} onChange={onInputChange} />
+            <FormError error={errors.role} />
           </label>
         </div>
         <div>

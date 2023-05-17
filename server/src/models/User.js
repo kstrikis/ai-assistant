@@ -26,13 +26,28 @@ class User extends uniqueFunc(Model) {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["email"],
+      required: ["email", "role"],
 
       properties: {
         email: { type: "string", pattern: "^\\S+@\\S+\\.\\S+$" },
         cryptedPassword: { type: "string" },
+        role: { type: "string" },
       },
     };
+  }
+
+  static get relationMappings() {
+    const { Dialog } = require("./index.js")
+    return {
+      dialogs: {
+        relation: Model.HasManyRelation,
+        modelClass: Dialog,
+        join: {
+          from: "users.id",
+          to: "dialogs.userId"
+        }
+      }
+    }
   }
 
   $formatJson(json) {
