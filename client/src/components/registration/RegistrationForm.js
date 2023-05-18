@@ -108,7 +108,7 @@ const RegistrationForm = () => {
         <div>
           <label>
             Email
-            <input type="text" name="email" value={userPayload.email} onChange={onInputChange} />
+            <input type="text" name="email" autoComplete="username" value={userPayload.email} onChange={onInputChange} />
             <FormError error={errors.email} />
           </label>
         </div>
@@ -118,6 +118,7 @@ const RegistrationForm = () => {
             <input
               type="password"
               name="password"
+              autoComplete="new-password"
               value={userPayload.password}
               onChange={onInputChange}
             />
@@ -130,6 +131,7 @@ const RegistrationForm = () => {
             <input
               type="password"
               name="passwordConfirmation"
+              autoComplete="new-password"
               value={userPayload.passwordConfirmation}
               onChange={onInputChange}
             />

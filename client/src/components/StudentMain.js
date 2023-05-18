@@ -3,13 +3,14 @@ import QuestionForm from "./QuestionForm.js";
 import { fetchDialogs, fetchMessages, createNewDialog, postQuestion } from "../services/api.js";
 import translateServerErrors from "../services/translateServerErrors.js";
 import ErrorList from "./layout/ErrorList.js";
+import { Link } from "react-router-dom";
 
 const StudentMain = (props) => {
     const dialogId = props.match.params.id
-    const [ dialogs, setDialogs ] = useState([])
-    const [ questions, setQuestions ] = useState([])
-    const [ noDialogMessage, setNoDialogMessage ] = useState("")
-    const [ errors, setErrors ] = useState([])
+    const [dialogs, setDialogs] = useState([])
+    const [questions, setQuestions] = useState([])
+    const [noDialogMessage, setNoDialogMessage] = useState("")
+    const [errors, setErrors] = useState([])
 
     const showQuestions = questions.map(question => {
         return (
@@ -22,7 +23,7 @@ const StudentMain = (props) => {
     const showDialogs = dialogs.map(dialogListId => {
         return (
             <li className="dialog" key={dialogListId}>
-                <a href={`/ask/${dialogListId}`}>{dialogListId}</a>
+                <Link to={`/ask/${dialogListId}`} >{dialogListId}</Link>
             </li>
         )
     })
@@ -32,12 +33,13 @@ const StudentMain = (props) => {
             const retrievedMessages = await fetchMessages(dialogId)
             return setQuestions(retrievedMessages.messages)
         }
-        return false
     }
 
     const getDialogs = async () => {
-        const retrievedDialogs = await fetchDialogs()
-        return setDialogs(retrievedDialogs.dialogs)
+        if (props.user) {
+            const retrievedDialogs = await fetchDialogs()
+            return setDialogs(retrievedDialogs.dialogs)
+        }
     }
 
     const handleNewDialog = async () => {
@@ -64,13 +66,9 @@ const StudentMain = (props) => {
     }
 
     useEffect(() => {
-        if (props.user) {
-            getDialogs()
-        }
-        if (dialogId) {
-            getMessages(dialogId)
-        }
-    }, [props])
+        getDialogs()
+        getMessages(dialogId)
+    }, [props.user, dialogId])
 
     return(
         <div className="student-main">

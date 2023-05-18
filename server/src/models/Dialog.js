@@ -10,7 +10,7 @@ class Dialog extends Model {
             type: "object",
             required: ["userId"],
             properties: {
-                userId: { type: "integer" }
+                userId: { type: ["integer", "string"] }
             }
         }
     }

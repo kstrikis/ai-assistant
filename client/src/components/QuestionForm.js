@@ -4,7 +4,7 @@ const QuestionForm = (props) => {
     const defaultFormData = {
         question: ""
     }
-    const [ formData, setFormData ] = useState(defaultFormData)
+    const [formData, setFormData] = useState(defaultFormData)
     
     const handleChange = (event) => {
         setFormData({
@@ -24,9 +24,8 @@ const QuestionForm = (props) => {
             <form onSubmit={handleSubmit}>
                 <label htmlFor="question">
                     Question content:
-                    <input
+                    <textarea
                         name="question"
-                        type="textarea"
                         value={formData.question}
                         onChange={handleChange}
                     />

@@ -23,6 +23,17 @@ const TopBar = ({ user }) => {
     </li>,
   ];
 
+  const teacherListItems = [
+    <li key="answer">
+      <Link to="/answer">Answer</Link>
+    </li>,
+  ]
+
+  let isTeacher = false
+  if (user) {
+    isTeacher = user.role === "teacher"
+  }
+
   return (
     <div className="top-bar">
       <div className="top-bar-left">
@@ -34,7 +45,7 @@ const TopBar = ({ user }) => {
         </ul>
       </div>
       <div className="top-bar-right">
-        <ul className="menu">{user ? authenticatedListItems : unauthenticatedListItems}</ul>
+        <ul className="menu">{isTeacher && teacherListItems}{user ? authenticatedListItems : unauthenticatedListItems}</ul>
       </div>
     </div>
   );

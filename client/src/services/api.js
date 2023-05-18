@@ -19,19 +19,23 @@ const fetchData = async (url, options) => {
 
 export const fetchDialogs = async (userId) => {
     const url = userId ? `${baseUrl}/dialogs?user_id=${userId}` : `${baseUrl}/dialogs`
-    return (await fetchData(url))
+    return await fetchData(url)
 }
 
 export const fetchMessages = async (dialogId) => {
-    return (await fetchData(`${baseUrl}/messages?dialog_id=${dialogId}`))
+    return await fetchData(`${baseUrl}/messages?dialog_id=${dialogId}`)
+}
+
+export const fetchUnreviewed = async () => {
+    return await fetchData(`${baseUrl}/messages/unreviewed`)
 }
 
 export const createNewDialog = async () => {
-    const url = `${baseUrl}/dialogs/new`
+    const url = `${baseUrl}/dialogs`
     const options = {
         method: "POST"
     }
-    return (await fetchData(url, options))
+    return await fetchData(url, options)
 }
 
 export const postQuestion = async (dialogId, question) => {
@@ -41,5 +45,5 @@ export const postQuestion = async (dialogId, question) => {
         body: JSON.stringify({ content: question }),
         headers: new Headers({"Content-Type": "application/json"})
     }
-    return (await fetchData(url, options))
+    return await fetchData(url, options)
 }
