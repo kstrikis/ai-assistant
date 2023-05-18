@@ -13,8 +13,8 @@ class Message extends Model {
                 content: { type: "string" },
                 messageType: { type: "string" },
                 reviewed: { type: "boolean" },
-                dialogId: { type: "integer" },
-                parentMessageId: { type: "integer" }
+                dialogId: { type: ["integer", "string"] },
+                parentMessageId: { type: ["integer", "string"] }
             }
         }
     }
