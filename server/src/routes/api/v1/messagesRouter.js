@@ -23,7 +23,7 @@ messagesRouter.get("/", async (req, res) => {
         const dialogUserId = parseInt(dialog.userId)
 
         if (requestingUser !== dialogUserId) {
-            return res.status(401).json({ errors: "unauthorized" })
+            return res.status(403).json({ errors: "forbidden" })
         }
 
         const messages = await dialog.$relatedQuery("messages")
@@ -43,7 +43,7 @@ messagesRouter.get("/unreviewed", async (req, res) => {
             return res.status(401).json({ errors: "must be logged in" })
         } 
         if (req.user.role !== "teacher") {
-            return res.status(401).json({ errors: "unauthorized" })
+            return res.status(403).json({ errors: "forbidden" })
         }
         const unreviewed = await Message.query().where('messageType', 'answer').where('reviewed', false)
         const unreviewedArray = []
@@ -80,7 +80,7 @@ messagesRouter.post("/", async (req, res) => {
         const dialog = await Dialog.query().findById(dialogId)
         const dialogUserId = parseInt(dialog.userId)
         if (userId !== dialogUserId) {
-            return res.status(401).json({ errors: "unauthorized" })
+            return res.status(403).json({ errors: "forbidden" })
         }
         const content = req.body.content
         const messageType = "question"
@@ -105,6 +105,32 @@ messagesRouter.post("/", async (req, res) => {
         } else {
             return res.status(500).json({ errors: err.message })
         }
+    }
+})
+
+messagesRouter.patch("/:id", async (req, res) => {
+    const id = req.params.id
+    try {
+        if (!req.user) {
+            return res.status(401).json({ errors: "must be logged in" })
+        }
+        if (req.user.role !== "teacher") {
+            return res.status(403).json({ errors: "must be a teacher to perform this action" })
+        }
+        if (!req.query.pass) {
+            return res.status(400).json({ errors: "parameter missing" })
+        }
+        
+        const answer = await Message.query().findOne({ id: id })
+        if (req.query.pass === "pass") {
+            await Message.query().findOne({ id: id }).patch({ reviewed: true })
+        } else {
+            await Message.query().findOne({ id: id }).patch({ reviewed: true, content: "The answer was rejected. Please rephrase the question and try again." })
+        }
+        await Message.query().findById(answer.parentMessageId).patch({ reviewed: true })
+        return res.status(200).json({ messages: "Answer reviewed successfully" })
+    } catch(err) {
+        return res.status(500).json({ errors: err.message })
     }
 })
 
