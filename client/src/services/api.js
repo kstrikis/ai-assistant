@@ -47,3 +47,11 @@ export const postQuestion = async (dialogId, question) => {
     }
     return await fetchData(url, options)
 }
+
+export const patchAnswer = async (answerId, passStatus) => {
+    const url = `${baseUrl}/messages/${answerId}?pass=${passStatus}`
+    const options = {
+        method: "PATCH"
+    }
+    return await fetchData(url, options)
+}

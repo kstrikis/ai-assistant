@@ -13,7 +13,7 @@ dialogsRouter.get("/", async (req, res) => {
         const requestingUser = parseInt(req.user.id)
         const userToRetrieve = req.query.user_id ? parseInt(req.query.user_id) : requestingUser
         if ( (requestingUser !== userToRetrieve) && (req.user.role !== "teacher") ) {
-            return res.status(401).json({ errors: "unauthorized" })
+            return res.status(403).json({ errors: "forbidden" })
         }
         
         const userObject = await User.query().findById(userToRetrieve)
