@@ -25,6 +25,7 @@ const QuestionForm = (props) => {
                 <label htmlFor="question">
                     Question content:
                     <textarea
+                        rows="6"
                         name="question"
                         value={formData.question}
                         onChange={handleChange}
