@@ -8,20 +8,25 @@ import { Link } from "react-router-dom";
 const StudentMain = (props) => {
     const dialogId = props.match.params.id
     const [dialogs, setDialogs] = useState([])
-    const [questions, setQuestions] = useState([])
     const [messages, setMessages] = useState([])
     const [noDialogMessage, setNoDialogMessage] = useState("")
     const [errors, setErrors] = useState([])
+    const [shouldRefresh, setShouldRefresh] = useState(false)
+    const refreshTime = 5000
 
+    let refreshCheck = false
     const showMessages = messages.map(question => {
         const answers = question.answers.map(answer => {
+            if (!answer.reviewed) {
+                refreshCheck = true
+            }
             return (
-                <div key={answer.answerId} className="answer">{answer.content}</div>
+                <div key={answer.id} className="answer">{answer.content}</div>
             )
         })
         return(
-            <tr className="table-row">
-                <td>
+            <tr key={question.id} className="table-row">
+                <td key={question.id}>
                     {question.content}
                 </td>
                 <td>
@@ -30,7 +35,9 @@ const StudentMain = (props) => {
             </tr>
         )
     })
-
+    if (refreshCheck) { 
+        setTimeout(setShouldRefresh, refreshTime, !shouldRefresh)
+    }
 
     const showDialogs = dialogs.map(dialogListId => {
         const inactive = <Link className="dialog-numbers" to={`/ask/${dialogListId}`} >{dialogListId}</Link>
@@ -74,7 +81,7 @@ const StudentMain = (props) => {
                 return setErrors(translateServerErrors(newQuestion.errors))
             } else {
                 setErrors([])
-                return setQuestions(questions.concat(newQuestion))
+                return setMessages(messages.concat(newQuestion))
             }
         } catch (err) {
             return console.error("Error in fetch", err)
@@ -84,7 +91,7 @@ const StudentMain = (props) => {
     useEffect(() => {
         getDialogs()
         getMessages(dialogId)
-    }, [props.user, dialogId])
+    }, [props.user, dialogId, shouldRefresh])
 
     const questionForm = <QuestionForm addQuestion={handleAddQuestion} />
 
