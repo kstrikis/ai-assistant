@@ -8,13 +8,15 @@ export const messageShow = (message) => {
             returnMessage[attribute] = message[attribute]
         }
     }
-    message.answers.map(answer => {
-        returnMessageAnswers.push({
-            id: answer.id,
-            content: answer.content,
-            reviewed: answer.reviewed
+    if (message.answers) {
+        message.answers.map(answer => {
+            returnMessageAnswers.push({
+                id: answer.id,
+                content: answer.content,
+                reviewed: answer.reviewed
+            })
         })
-    })
+    }
     return { ...returnMessage, answers: returnMessageAnswers }
 }
 

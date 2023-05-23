@@ -1,7 +1,7 @@
 import express from "express"
 import { ValidationError } from "objection"
 import { Dialog, Message } from "../../../models/index.js"
-import { messagesArrayShow, messagesArrayShowStudent, unreviewedSerializer } from "./serializers/messagesSerializer.js"
+import { messageShow, messagesArrayShow, messagesArrayShowStudent, unreviewedSerializer } from "./serializers/messagesSerializer.js"
 import cleanUserInput from "../../../services/cleanUserInput.js"
 import { retrieveAnswer } from "../../../services/openAiHelper.js"
 
@@ -61,15 +61,27 @@ messagesRouter.get("/unreviewed", async (req, res) => {
 })
 
 const createAnswer = async (question) => {
-    const answer = await retrieveAnswer(question.content)
-    const answerObject = {
-        content: answer,
-        messageType: "answer",
-        reviewed: false,
-        dialogId: question.dialogId,
-        parentMessageId: question.id
-    }
+    try {
+        const answer = await retrieveAnswer(question.content)
+        const answerObject = {
+            content: answer,
+            messageType: "answer",
+            reviewed: false,
+            dialogId: question.dialogId,
+            parentMessageId: question.id
+        }
+
     await Message.query().insert(answerObject)
+    } catch(err) {
+        const apiErrAnswer = {
+            content: `Error in API request: ${err.message}`,
+            messageType: "answer",
+            reviewed: true,
+            dialogId: question.dialogId,
+            parentMessageId: question.id
+        }
+        await Message.query().insert(apiErrAnswer)
+    }
 }
 
 messagesRouter.post("/", async (req, res) => {
@@ -101,7 +113,7 @@ messagesRouter.post("/", async (req, res) => {
             console.error("error in API query: ",err)
         })
 
-        return res.status(201).json(newQuestion)
+        return res.status(201).json({...messageShow(newQuestion), answers: [{id: newQuestion.id, content: "Asking LLM..."}]})
     } catch (err) {
         if (err instanceof ValidationError) {
             return res.status(422).json({ errors: err.data })
