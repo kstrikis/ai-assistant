@@ -12,3 +12,87 @@
   -moz-tab-size: 4;
   tab-size: 4;
 }
+
+$color-lightpurple: rgb(189, 187, 211);
+
+.teacher-main {
+  display: inline-block;
+  justify-content: center;
+  margin: 3em;
+}
+
+.student-main {
+  display: inline-block;
+  justify-content: center;
+  margin: 3em;
+}
+
+.dialog-numbers {
+  border: solid $color-lightpurple;
+  border-radius: 0.5em;
+  color: black;
+  padding: 1em;
+  margin: 0.5em;
+  background-color: $color-lightpurple;
+  display: inline; 
+}
+.dialog-numbers:hover {
+  background-color: darken($color-lightpurple, 40%);
+  color: white;
+}
+
+.dialog-active {
+  @extend .dialog-numbers;
+  filter: brightness(65%);
+}
+
+.message-review-list {
+  border-collapse: separate;
+  border: solid lightgray;
+  border-radius: 10px;
+  min-width: 800px;
+}
+
+.message-dialog {
+  border-collapse: separate;
+  border: solid lightgray;
+  border-radius: 10px;
+  min-width: 800px;
+}
+
+.answer {
+  white-space: pre-wrap;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+}
+
+.table-header {
+  font-size: 140%;
+  background-color: rgb(189, 187, 211);
+}
+
+.table-header th:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.table-header th:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.review-button {
+  display: inline;
+  margin: 5px;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 400ms ease-in;
+}

@@ -29,6 +29,22 @@ class Message extends Model {
                     from: "messages.dialogId",
                     to: "dialogs.id"
                 }
+            },
+            answers: {
+                relation: Model.HasManyRelation,
+                modelClass: Message,
+                join: {
+                    from: "messages.id",
+                    to: "messages.parentMessageId"
+                }
+            },
+            question: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Message,
+                join: {
+                    from: "messages.parentMessageId",
+                    to: "messages.id"
+                }
             }
         }
     }

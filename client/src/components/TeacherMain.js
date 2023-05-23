@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchUnreviewed, patchAnswer } from "../services/api.js";
+import { TransitionGroup, CSSTransition } from "react-transition-group"
 
 const TeacherMain = (props) => {
     const [messages, setMessages] = useState([])
@@ -25,27 +26,57 @@ const TeacherMain = (props) => {
     }
 
     const showMessages = messages.map(message => {
-        const passButton = <button className="button" answerid={message.answerId} value="pass" onClick={handlePassRejectClick}>Pass</button>
-        const rejectButton = <button className="button" answerid={message.answerId} value="reject" onClick={handlePassRejectClick}>Reject</button>
+        const passButton = <button
+            className="button success review-button"
+            answerid={message.answerId}
+            value="pass"
+            onClick={handlePassRejectClick}
+            >
+                Accept
+            </button>
+        const rejectButton = <button
+            className="button secondary review-button"
+            answerid={message.answerId}
+            value="reject"
+            onClick={handlePassRejectClick}
+            >
+                Reject
+            </button>
         return (
-            <>
-                <div className="cell small-4 callout">{message.questionContent}</div>
-                <div className="cell small-6 callout">{message.answerContent}</div>
-                <div className="cell small-2 callout">
-                    {passButton}
-                    {rejectButton}
-                </div>
-            </>
+            <CSSTransition key={message.questionId} timeout={500} classNames="fade">
+                <tr className="table-row">
+                    <td>
+                        {message.questionContent}
+                    </td>
+                    <td className="answer">
+                        <div className="grid-y">
+                            <div>
+                                {message.answerContent}
+                            </div>
+                            <div>
+                                {passButton}{rejectButton}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </CSSTransition>
         )
     })
 
     return (
         <div className="teacher-main">
-            <div className="grid-x">
-                <div className="cell small-6 callout">Question</div>
-                <div className="cell small-6 callout">Answer</div>
-                {showMessages}
-            </div>
+            <h4>Answers from AI ready for review:</h4>
+            <table className="message-review-list">
+                <thead>
+                <tr className="table-header">
+                    <th width="300">Question</th>
+                    <th>Answer</th>
+                </tr>
+                </thead>
+                    <TransitionGroup component="tbody">
+                        {showMessages}
+                    </TransitionGroup>
+            </table>
         </div>
     )
 }

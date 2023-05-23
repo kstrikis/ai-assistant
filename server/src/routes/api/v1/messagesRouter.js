@@ -1,7 +1,7 @@
 import express from "express"
 import { ValidationError } from "objection"
 import { Dialog, Message } from "../../../models/index.js"
-import { messagesArrayShow, messagesArrayShowStudent, questionAnswerPairShow } from "./serializers/messagesSerializer.js"
+import { messagesArrayShow, messagesArrayShowStudent, unreviewedSerializer } from "./serializers/messagesSerializer.js"
 import cleanUserInput from "../../../services/cleanUserInput.js"
 import { retrieveAnswer } from "../../../services/openAiHelper.js"
 
@@ -21,12 +21,15 @@ messagesRouter.get("/", async (req, res) => {
         const dialogId = req.query.dialog_id
         const dialog = await Dialog.query().findById(dialogId)
         const dialogUserId = parseInt(dialog.userId)
-
         if (requestingUser !== dialogUserId) {
             return res.status(403).json({ errors: "forbidden" })
         }
 
-        const messages = await dialog.$relatedQuery("messages")
+        const messages = await Message
+            .query()
+            .where('dialogId', dialogId)
+            .withGraphFetched('answers')
+            .whereNull('parentMessageId')
         if (req.user.role === "teacher") {
             return res.status(200).json({ messages: messagesArrayShow(messages) })
         } else {
@@ -45,13 +48,13 @@ messagesRouter.get("/unreviewed", async (req, res) => {
         if (req.user.role !== "teacher") {
             return res.status(403).json({ errors: "forbidden" })
         }
-        const unreviewed = await Message.query().where('messageType', 'answer').where('reviewed', false)
-        const unreviewedArray = []
-        await Promise.all(unreviewed.map(async (answer) => {
-            const parent = await Message.query().findById(answer.parentMessageId)
-            unreviewedArray.push(questionAnswerPairShow(parent, answer))
-        }))
-        return res.status(200).json({ messages: unreviewedArray })
+
+        const answers = await Message
+            .query()
+            .where('messageType', 'answer')
+            .where('reviewed', false)
+            .withGraphFetched('question')
+        return res.status(200).json({ messages: unreviewedSerializer(answers) })
     } catch (err) {
         return res.status(500).json({ errors: err.message })
     }
@@ -123,11 +126,23 @@ messagesRouter.patch("/:id", async (req, res) => {
         
         const answer = await Message.query().findOne({ id: id })
         if (req.query.pass === "pass") {
-            await Message.query().findOne({ id: id }).patch({ reviewed: true })
+            await Message
+                .query()
+                .findOne({ id: id })
+                .patch({ reviewed: true })
         } else {
-            await Message.query().findOne({ id: id }).patch({ reviewed: true, content: "The answer was rejected. Please rephrase the question and try again." })
+            await Message
+                .query()
+                .findOne({ id: id })
+                .patch({
+                    reviewed: true,
+                    content: "The answer was rejected. Please rephrase the question and try again."
+                })
         }
-        await Message.query().findById(answer.parentMessageId).patch({ reviewed: true })
+        await Message
+            .query()
+            .findById(answer.parentMessageId)
+            .patch({ reviewed: true })
         return res.status(200).json({ messages: "Answer reviewed successfully" })
     } catch(err) {
         return res.status(500).json({ errors: err.message })

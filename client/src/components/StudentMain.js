@@ -9,29 +9,45 @@ const StudentMain = (props) => {
     const dialogId = props.match.params.id
     const [dialogs, setDialogs] = useState([])
     const [questions, setQuestions] = useState([])
+    const [messages, setMessages] = useState([])
     const [noDialogMessage, setNoDialogMessage] = useState("")
     const [errors, setErrors] = useState([])
 
-    const showQuestions = questions.map(question => {
-        return (
-            <li className="question" key={question.id}>
-                {question.content}
-            </li>
+    const showMessages = messages.map(question => {
+        const answers = question.answers.map(answer => {
+            return (
+                <div key={answer.answerId} className="answer">{answer.content}</div>
+            )
+        })
+        return(
+            <tr className="table-row">
+                <td>
+                    {question.content}
+                </td>
+                <td>
+                    {answers}
+                </td>
+            </tr>
         )
     })
 
+
     const showDialogs = dialogs.map(dialogListId => {
+        const inactive = <Link className="dialog-numbers" to={`/ask/${dialogListId}`} >{dialogListId}</Link>
+        const active = <Link className="dialog-active" to={`/ask/${dialogListId}`} >{dialogListId}</Link>
         return (
-            <li className="dialog" key={dialogListId}>
-                <Link to={`/ask/${dialogListId}`} >{dialogListId}</Link>
-            </li>
+            <button key={dialogListId}>
+                {dialogId === dialogListId ? active : inactive}
+            </button>
         )
     })
 
     const getMessages = async () => {
         if (dialogId) {
             const retrievedMessages = await fetchMessages(dialogId)
-            return setQuestions(retrievedMessages.messages)
+            return setMessages(retrievedMessages.messages)
+        } else {
+            setMessages([])
         }
     }
 
@@ -70,22 +86,33 @@ const StudentMain = (props) => {
         getMessages(dialogId)
     }, [props.user, dialogId])
 
+    const questionForm = <QuestionForm addQuestion={handleAddQuestion} />
+
     return(
         <div className="student-main">
-            <div className="callout messages">
-                Showing questions for dialog: {dialogId}
-                <ul>
-                    {showQuestions}
-                </ul>
-            </div>
-            <ErrorList errors={errors} />
-            <QuestionForm addQuestion={handleAddQuestion} />
-            {noDialogMessage}
-            <p>Switch to another dialog:</p>
+            <h4>Select a dialog to begin the conversation:</h4>
             <ul>
                 {showDialogs}
+            <button className="dialog-numbers" onClick={handleNewDialog}>Make a new dialog</button>
             </ul>
-            <button className="button" onClick={handleNewDialog}>Make a new dialog</button>
+            {noDialogMessage}
+            <div className="messages">
+                <table className="message-dialog">
+                    <thead>
+                        <tr className="table-header">
+                            <th width="300">Question</th>
+                            <th>Answer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {showMessages}
+                    </tbody>
+                </table>
+            </div>
+                <ErrorList errors={errors} />
+            <div>
+                {dialogId && questionForm}
+            </div>
         </div>
     )
 }
