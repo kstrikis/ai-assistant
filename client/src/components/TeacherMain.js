@@ -5,7 +5,7 @@ import { TransitionGroup, CSSTransition } from "react-transition-group"
 const TeacherMain = (props) => {
     const [messages, setMessages] = useState([])
     const [shouldRefresh, setShouldRefresh] = useState(false)
-    const refreshTime = 5000
+    const refreshTime = 1000
 
     const getUnreviewed = async () => {
         const retrievedMessages = await fetchUnreviewed()
@@ -14,7 +14,10 @@ const TeacherMain = (props) => {
 
     useEffect(() => {
         getUnreviewed()
-        setTimeout(setShouldRefresh, refreshTime, !shouldRefresh)
+        const timeoutId = setTimeout(setShouldRefresh, refreshTime, !shouldRefresh)
+        return () => {
+            clearTimeout(timeoutId)
+        }
     }, [shouldRefresh])
 
     const handlePassRejectClick = (event) => {

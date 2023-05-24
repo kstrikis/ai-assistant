@@ -9,7 +9,7 @@ const teacherRoutes = ["/answer"]
 
 router.get("/", (req, res) => {
   if (!req.user) {
-    res.redirect("/user-sessions/new")
+    res.sendFile(getClientIndexPath());
   } else if (req.user.role === "teacher") {
     res.redirect("/answer")
   } else {

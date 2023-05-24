@@ -12,21 +12,23 @@ const StudentMain = (props) => {
     const [noDialogMessage, setNoDialogMessage] = useState("")
     const [errors, setErrors] = useState([])
     const [shouldRefresh, setShouldRefresh] = useState(false)
-    const refreshTime = 5000
+    const refreshTime = 1000
 
-    let refreshCheck = false
     const showMessages = messages.map(question => {
+        if(question.answers.length===0 && !shouldRefresh) {
+            setShouldRefresh(true)
+        }
         const answers = question.answers.map(answer => {
-            if (!answer.reviewed) {
-                refreshCheck = true
+            if (!answer.reviewed && !shouldRefresh) {
+                setShouldRefresh(true)
             }
             return (
                 <div key={answer.id} className="answer">{answer.content}</div>
             )
         })
         return(
-            <tr key={question.id} className="table-row">
-                <td key={question.id}>
+            <tr className="table-row" key={question.id}>
+                <td>
                     {question.content}
                 </td>
                 <td>
@@ -35,13 +37,11 @@ const StudentMain = (props) => {
             </tr>
         )
     })
-    if (refreshCheck) { 
-        setTimeout(setShouldRefresh, refreshTime, !shouldRefresh)
-    }
 
-    const showDialogs = dialogs.map(dialogListId => {
-        const inactive = <Link className="dialog-numbers" to={`/ask/${dialogListId}`} >{dialogListId}</Link>
-        const active = <Link className="dialog-active" to={`/ask/${dialogListId}`} >{dialogListId}</Link>
+
+    const showDialogs = dialogs.map((dialogListId, arrayIndex) => {
+        const inactive = <Link className="dialog-numbers" to={`/ask/${dialogListId}`} >{arrayIndex+1}</Link>
+        const active = <Link className="dialog-active" to={`/ask/${dialogListId}`} >{arrayIndex+1}</Link>
         return (
             <button key={dialogListId}>
                 {dialogId === dialogListId ? active : inactive}
@@ -91,7 +91,20 @@ const StudentMain = (props) => {
     useEffect(() => {
         getDialogs()
         getMessages(dialogId)
-    }, [props.user, dialogId, shouldRefresh])
+        setErrors([])
+    }, [props.user, dialogId])
+
+    useEffect(() => {
+        if (shouldRefresh) { 
+            setShouldRefresh(false)
+            const timeoutId = setTimeout(() => {
+                getMessages(dialogId)
+            }, refreshTime)
+            return () => {
+                clearTimeout(timeoutId)
+            }
+        }
+    },[shouldRefresh])
 
     const questionForm = <QuestionForm addQuestion={handleAddQuestion} />
 

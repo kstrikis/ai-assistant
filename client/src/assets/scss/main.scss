@@ -15,6 +15,32 @@
 
 $color-lightpurple: rgb(189, 187, 211);
 
+.home {
+  min-width: 1000px
+}
+
+.subheader {
+  color: #331e38;
+}
+
+.top-bar {
+  min-width: 700px;
+  // white-space: nowrap;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.button {
+  border-radius: 5px;
+}
+
+.home-banner {
+  background-color: lighten(#706993, 30%);
+  text-align: center;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-size: 4em;
+}
+
 .teacher-main {
   display: inline-block;
   justify-content: center;
@@ -88,6 +114,15 @@ $color-lightpurple: rgb(189, 187, 211);
   margin: 5px;
 }
 
+.fade-dialog-exit {
+  opacity: 1;
+}
+
+.fade-dialog-exit-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}
+
 .fade-exit {
   opacity: 1;
 }
@@ -95,4 +130,21 @@ $color-lightpurple: rgb(189, 187, 211);
 .fade-exit-active {
   opacity: 0.01;
   transition: opacity 400ms ease-in;
+}
+
+.student-signup {
+  display: block;
+  text-align: center;
+  margin-top: 5em;
+}
+
+.thumbnail {
+  max-height: 270px;
+}
+
+.teacher-signup {
+  display: block;
+  text-align: center;
+  margin-top: 5em;
+  margin-bottom: 5em;
 }
