@@ -4,12 +4,14 @@ import FormError from "../layout/FormError";
 import config from "../../config";
 import translateServerErrors from "../../services/translateServerErrors";
 
-const RegistrationForm = () => {
+const RegistrationForm = (props) => {
+  const paramsRole = props.match.params.role
+  const defaultRole = paramsRole ? paramsRole : "student"
   const [userPayload, setUserPayload] = useState({
     email: "",
     password: "",
     passwordConfirmation: "",
-    role: "student"
+    role: defaultRole
   });
 
   const [errors, setErrors] = useState({});
@@ -80,7 +82,6 @@ const RegistrationForm = () => {
             const error = new Error(errorMessage);
             throw error;
           }
-          const userData = await response.json();
           setShouldRedirect(true);
         }
       } catch (err) {
@@ -100,9 +101,18 @@ const RegistrationForm = () => {
     location.href = "/";
   }
 
+  let registrationWelcome = ""
+  if (paramsRole === "student") {
+    registrationWelcome = "Students: "
+  }
+  if (paramsRole === "teacher") {
+    registrationWelcome = "Teachers: "
+  }
+  const roleHide = (paramsRole === "student" || paramsRole === "teacher") ? "hide" : ""
+
   return (
     <div className="grid-container">
-      <h1>Register</h1>
+      <h1>{registrationWelcome}Get started now!</h1>
       <ErrorList errors={serverErrors} />
       <form onSubmit={onSubmit}>
         <div>
@@ -139,11 +149,26 @@ const RegistrationForm = () => {
           </label>
         </div>
         <div>
-          <label>
-            Role
-            <input type="text" name="role" value={userPayload.role} onChange={onInputChange} />
+          <fieldset className={`${roleHide}`}>
+            <legend>Role</legend>
+            <input
+              type="radio"
+              name="role"
+              value="student"
+              id="roleStudent"
+              onChange={onInputChange}
+              />
+            <label htmlFor="roleStudent">Student</label>
+            <input
+              type="radio"
+              name="role"
+              value="teacher"
+              id="roleTeacher"
+              onChange={onInputChange}
+              />
+            <label htmlFor="roleTeacher">Teacher</label>
             <FormError error={errors.role} />
-          </label>
+          </fieldset>
         </div>
         <div>
           <input type="submit" className="button" value="Register" />

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Home = props => {
 
@@ -15,7 +16,7 @@ const Home = props => {
                     <div className ="cell small-4">
                         <h2>Sign up as a student</h2>
                                 <p>Discover the future of learning with our AI Chatbot, your personal guide to academic success. Don't miss out – sign up today and unlock your potential!</p>
-                        <button className ="button large">Sign up now!</button>
+                        <Link to="/users/new/student" className ="button large">Sign up now!</Link>
                     </div>
                     <div className ="cell small-4">
                         <div className ="blog-post">
@@ -37,7 +38,7 @@ const Home = props => {
                             <div className ="callout>">
                                 <p>Supercharge your teaching with our AI Chatbot, tailored to answer student queries round the clock. Register now to multiply your reach, save precious time, and focus more on fostering growth. Embrace this innovation in teaching – make your work simpler and more efficient!</p>
                             </div>
-                        <button className ="button large">Register now!</button>
+                        <Link to="/users/new/teacher" className ="button large">Register now!</Link>
                     </div>
                 </div>
             </article>
