@@ -3,13 +3,13 @@ import getClientIndexPath from "../config/getClientIndexPath.js";
 
 const router = new express.Router();
 
-const clientRoutes = ["/user-sessions/new", "/users/new"];
+const clientRoutes = ["/user-sessions/new", "/users/new", "/users/new/:role"];
 const authedClientRoutes = ["/ask", "/ask/:id", "/answer"];
 const teacherRoutes = ["/answer"]
 
 router.get("/", (req, res) => {
   if (!req.user) {
-    res.redirect("/user-sessions/new")
+    res.sendFile(getClientIndexPath());
   } else if (req.user.role === "teacher") {
     res.redirect("/answer")
   } else {

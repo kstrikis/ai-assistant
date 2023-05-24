@@ -18,7 +18,6 @@ const QuestionForm = (props) => {
         props.addQuestion(formData.question)
         setFormData(defaultFormData)
     }
-    
     return (
         <div className="question-form">
             <form onSubmit={handleSubmit}>
