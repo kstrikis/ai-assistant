@@ -3,7 +3,7 @@ import QuestionForm from "./QuestionForm.js";
 import { fetchDialogs, fetchMessages, createNewDialog, postQuestion } from "../services/api.js";
 import translateServerErrors from "../services/translateServerErrors.js";
 import ErrorList from "./layout/ErrorList.js";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const StudentMain = (props) => {
     const dialogId = props.match.params.id
@@ -65,9 +65,11 @@ const StudentMain = (props) => {
         }
     }
 
+    const history = useHistory()
     const handleNewDialog = async () => {
         const response = await createNewDialog()
-        return setDialogs(dialogs.concat(response.dialogId))
+        setDialogs(dialogs.concat(response.dialogId))
+        return history.push(`/ask/${response.dialogId}`)
     }
     
     const handleAddQuestion = async (question) => {
