@@ -1,15 +1,33 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Home = props => {
+const Home = () => {
 
     return (
         <div className ="home">
 
             <div className =" callout large home-banner">
-                <span>chtAI</span>
+                <span>Welcome to chtAI!</span>
                 <h2 className ="subheader">An AI Teaching Assistant</h2>
             </div>
+
+            <article className ="grid-container">
+                <div className ="grid-x align-center">
+                    <div className ="cell small-4">
+                        <h3>What is chtAI?</h3>
+                        <h5>chtAI bridges students, teachers, and AI. It provides students the benefit of ChatGPT-style learning and makes teachers more effective in giving assistance and individualized feedback to an entire class.</h5>
+                    </div>
+                    <div className ="cell small-4 small-offset-1">
+                        <h3>How does chtAI work?</h3>
+                        <ol>
+                            <h5><li>Students submit any question related to their coursework</li></h5>
+                            <h5><li>The question is passed to the AI, and its answer is held for review</li></h5>
+                            <h5><li>The teacher reviews the answer</li></h5>
+                            <h5><li>The teacher approves, denies, or edits the answer, and it is immediately forwarded back to the student!</li></h5>
+                        </ol>
+                    </div>
+                </div>
+            </article>
 
             <article className ="grid-container student-signup">
                 <div className ="grid-x align-middle align-center">

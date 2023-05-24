@@ -16,7 +16,8 @@
 $color-lightpurple: rgb(189, 187, 211);
 
 .home {
-  min-width: 1000px
+  min-width: 1000px;
+  flex-wrap: nowrap;
 }
 
 .subheader {
@@ -24,10 +25,13 @@ $color-lightpurple: rgb(189, 187, 211);
 }
 
 .top-bar {
-  min-width: 700px;
-  // white-space: nowrap;
-  display: flex;
+  min-width: 1000px;
   flex-wrap: nowrap;
+}
+
+.top-bar-right {
+  position: sticky;
+  right: 0;
 }
 
 .button {
