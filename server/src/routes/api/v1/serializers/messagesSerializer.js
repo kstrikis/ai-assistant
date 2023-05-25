@@ -21,14 +21,6 @@ export const messageShow = (message) => {
 }
 
 export const messagesArrayShow = (messages) => {
-    const returnedArray = messages.map(message => {
-        return messageShow(message)
-    })
-    returnedArray.sort((a, b) => a.id - b.id)
-    return returnedArray
-}
-
-export const messagesArrayShowStudent = (messages) => {
     messages.sort((a, b) => a.id - b.id)
     const returnedArray = messages.map(message => {
         message.answers.map(answer => {

@@ -38,6 +38,14 @@ export const createNewDialog = async () => {
     return await fetchData(url, options)
 }
 
+export const deleteDialog = async (dialogId) => {
+    const url = `${baseUrl}/dialogs/${dialogId}`
+    const options = {
+        method: "DELETE"
+    }
+    return await fetchData(url, options)
+}
+
 export const postQuestion = async (dialogId, question) => {
     const url = `${baseUrl}/messages?dialog_id=${dialogId}`
     const options = {

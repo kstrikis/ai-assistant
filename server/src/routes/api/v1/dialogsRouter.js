@@ -38,4 +38,22 @@ dialogsRouter.post("/", async (req, res) => {
     }
 })
 
+dialogsRouter.delete("/:id", async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ errors: "must be logged in" })
+        }
+        const dialogId = req.params.id
+        const userId = req.user.id
+        const dialog = await Dialog.query().findById(dialogId)
+        if (dialog.userId !== userId) {
+            return res.status(403).json({ errors: "forbidden" })
+        }
+        await Dialog.query().deleteById(dialogId)
+        return res.status(200).json({ message: "dialog deleted" })
+    } catch (err) {
+        return res.status(500).json({ errors: err.message })
+    }
+})
+
 export default dialogsRouter
