@@ -37,10 +37,15 @@ const TopBar = ({ user }) => {
   return (
     <div className="top-bar">
       <div className="top-bar-left">
-        <ul className="menu">
-          <li className="menu-text">AI-Powered Teaching Assistant</li>
+        <ul className="menu top-bar-menu">
+          <li>
+            <img src="/chtAI-logo.gif" alt="chtAI logo" className="navlogo"></img>
+          </li>
           <li>
             <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/about">About</Link>
           </li>
         </ul>
       </div>

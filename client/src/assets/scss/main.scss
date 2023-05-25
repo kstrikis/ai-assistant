@@ -17,7 +17,6 @@ $color-lightpurple: rgb(189, 187, 211);
 
 .home {
   min-width: 900px;
-  flex-wrap: nowrap;
 }
 
 .subheader {
@@ -25,13 +24,21 @@ $color-lightpurple: rgb(189, 187, 211);
 }
 
 .top-bar {
-  min-width: 900px;
   flex-wrap: nowrap;
+  background-color: #e6e6e6;
+  padding: 0 0 0 1em;
 }
 
 .top-bar-right {
-  position: sticky;
-  right: 0;
+  background-color: #e6e6e6;
+  padding: 1em;
+  box-sizing: border-box;
+}
+
+@media (max-width: 40em) {
+  .top-bar {
+    max-width: 70%;
+  }
 }
 
 .button {
@@ -157,4 +164,15 @@ $color-lightpurple: rgb(189, 187, 211);
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
+}
+
+.about {
+  margin-top: 5em;
+}
+.about a {
+  color: blue;
+}
+
+.navlogo {
+  height: 40px;
 }
