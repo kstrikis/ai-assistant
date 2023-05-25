@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import QuestionForm from "./QuestionForm.js";
-import { fetchDialogs, fetchMessages, createNewDialog, postQuestion } from "../services/api.js";
+import { fetchDialogs, fetchMessages, createNewDialog, deleteDialog, postQuestion } from "../services/api.js";
 import translateServerErrors from "../services/translateServerErrors.js";
 import ErrorList from "./layout/ErrorList.js";
 import { Link, useHistory } from "react-router-dom";
 
 const StudentMain = (props) => {
-    const dialogId = props.match.params.id
     const [dialogs, setDialogs] = useState([])
     const [messages, setMessages] = useState([])
     const [noDialogMessage, setNoDialogMessage] = useState("")
     const [errors, setErrors] = useState([])
     const [shouldRefresh, setShouldRefresh] = useState(false)
+
+    const dialogId = props.match.params.id
+    const history = useHistory()
     const refreshTime = 1000
 
     const showMessages = messages.map(question => {
@@ -22,18 +24,12 @@ const StudentMain = (props) => {
             if (!answer.reviewed && !shouldRefresh) {
                 setShouldRefresh(true)
             }
-            return (
-                <div key={answer.id} className="answer">{answer.content}</div>
-            )
+            return <div key={answer.id} className="answer">{answer.content}</div>
         })
         return(
             <tr className="table-row" key={question.id}>
-                <td>
-                    {question.content}
-                </td>
-                <td>
-                    {answers}
-                </td>
+                <td>{question.content}</td>
+                <td colSpan="2">{answers}</td>
             </tr>
         )
     })
@@ -52,6 +48,9 @@ const StudentMain = (props) => {
     const getMessages = async () => {
         if (dialogId) {
             const retrievedMessages = await fetchMessages(dialogId)
+            if (!retrievedMessages) {
+                return history.push("/ask/")
+            }
             return setMessages(retrievedMessages.messages)
         } else {
             setMessages([])
@@ -61,22 +60,22 @@ const StudentMain = (props) => {
     const getDialogs = async () => {
         if (props.user) {
             const retrievedDialogs = await fetchDialogs()
+            if (retrievedDialogs.dialogs.length===0) {
+                handleNewDialog()
+            } else if (!dialogId) {
+                return history.push(`/ask/${retrievedDialogs.dialogs.slice(-1)[0]}`)
+            }
             return setDialogs(retrievedDialogs.dialogs)
         }
     }
 
-    const history = useHistory()
     const handleNewDialog = async () => {
         const response = await createNewDialog()
         setDialogs(dialogs.concat(response.dialogId))
-        return history.push(`/ask/${response.dialogId}`)
+        return history.push("/ask/")
     }
     
     const handleAddQuestion = async (question) => {
-        if (!dialogId) {
-            setNoDialogMessage("You must choose a dialog before you can do that")
-            return false
-        }
         try {
             const newQuestion = await postQuestion(dialogId, question)
             if (newQuestion.errors) {
@@ -87,6 +86,20 @@ const StudentMain = (props) => {
             }
         } catch (err) {
             return console.error("Error in fetch", err)
+        }
+    }
+
+    const handleDeleteDialog = async () => {
+        if (!dialogId) {
+            return false
+        }
+        await deleteDialog(dialogId)
+        const nextDialog = dialogs[dialogs.indexOf(dialogId)+1] || dialogs[dialogs.indexOf(dialogId)-1]
+        if (nextDialog){
+            return history.push(`/ask/${nextDialog}`)
+        } else {
+            handleNewDialog()
+            return history.push("/ask/")
         }
     }
 
@@ -113,17 +126,18 @@ const StudentMain = (props) => {
     return(
         <div className="student-main">
             <h4>Select a dialog to begin the conversation:</h4>
-            <ul>
+            <ul className="dialog-number-group">
                 {showDialogs}
-            <button className="dialog-numbers" onClick={handleNewDialog}>Make a new dialog</button>
+                <button className="dialog-numbers" onClick={handleNewDialog}>Make a new dialog</button>
             </ul>
             {noDialogMessage}
             <div className="messages">
                 <table className="message-dialog">
                     <thead>
                         <tr className="table-header">
-                            <th width="300">Question</th>
-                            <th>Answer</th>
+                            <th width="30%">Question</th>
+                            <th width="65%">Answer</th>
+                            <th className="button alert delete-button" onClick={handleDeleteDialog}>Delete this dialog</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -133,7 +147,7 @@ const StudentMain = (props) => {
             </div>
                 <ErrorList errors={errors} />
             <div>
-                {dialogId && questionForm}
+                {questionForm}
             </div>
         </div>
     )

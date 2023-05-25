@@ -1,7 +1,7 @@
 import express from "express"
 import { ValidationError } from "objection"
 import { Dialog, Message } from "../../../models/index.js"
-import { messageShow, messagesArrayShow, messagesArrayShowStudent, unreviewedSerializer } from "./serializers/messagesSerializer.js"
+import { messageShow, messagesArrayShow, unreviewedSerializer } from "./serializers/messagesSerializer.js"
 import cleanUserInput from "../../../services/cleanUserInput.js"
 import { retrieveAnswer } from "../../../services/openAiHelper.js"
 
@@ -20,6 +20,9 @@ messagesRouter.get("/", async (req, res) => {
         const requestingUser = parseInt(req.user.id)
         const dialogId = req.query.dialog_id
         const dialog = await Dialog.query().findById(dialogId)
+        if (!dialog) {
+            return res.status(403).json({ errors: "forbidden" })
+        }
         const dialogUserId = parseInt(dialog.userId)
         if (requestingUser !== dialogUserId) {
             return res.status(403).json({ errors: "forbidden" })
@@ -30,11 +33,7 @@ messagesRouter.get("/", async (req, res) => {
             .where('dialogId', dialogId)
             .withGraphFetched('answers')
             .whereNull('parentMessageId')
-        if (req.user.role === "teacher") {
-            return res.status(200).json({ messages: messagesArrayShow(messages) })
-        } else {
-            return res.status(200).json({ messages: messagesArrayShowStudent(messages) })
-        }
+        return res.status(200).json({ messages: messagesArrayShow(messages) })
     } catch (err) {
         return res.status(500).json({ errors: err.message })
     }
