@@ -124,6 +124,7 @@ messagesRouter.post("/", async (req, res) => {
 
 messagesRouter.patch("/:id", async (req, res) => {
     const id = req.params.id
+    const answerContent = req.body.answerContent
     try {
         if (!req.user) {
             return res.status(401).json({ errors: "must be logged in" })
@@ -131,7 +132,7 @@ messagesRouter.patch("/:id", async (req, res) => {
         if (req.user.role !== "teacher") {
             return res.status(403).json({ errors: "must be a teacher to perform this action" })
         }
-        if (!req.query.pass) {
+        if (!req.query.pass || !req.body.answerContent) {
             return res.status(400).json({ errors: "parameter missing" })
         }
         
@@ -140,7 +141,7 @@ messagesRouter.patch("/:id", async (req, res) => {
             await Message
                 .query()
                 .findOne({ id: id })
-                .patch({ reviewed: true })
+                .patch({ reviewed: true, content: answerContent })
         } else {
             await Message
                 .query()
