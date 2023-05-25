@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchUnreviewed, patchAnswer } from "../services/api.js";
 import { TransitionGroup, CSSTransition } from "react-transition-group"
+import AnswerTile from "./AnswerTile.js";
 
 const TeacherMain = (props) => {
     const [messages, setMessages] = useState([])
@@ -20,11 +21,8 @@ const TeacherMain = (props) => {
         }
     }, [shouldRefresh])
 
-    const handlePassRejectClick = (event) => {
-        event.preventDefault()
-        const answerId = event.currentTarget.getAttribute("answerid")
-        const actionWord = event.currentTarget.getAttribute("value")
-        patchAnswer(answerId, actionWord).catch((err) => {
+    const handlePassRejectClick = (answerId, passStatus, answerContent) => {
+        patchAnswer(answerId, passStatus, answerContent).catch((err) => {
             console.error("error in patch",err)
         })
         const newMessages = messages.filter(message => message.answerId !== answerId)
@@ -32,22 +30,6 @@ const TeacherMain = (props) => {
     }
 
     const showMessages = messages.map(message => {
-        const passButton = <button
-            className="button success review-button"
-            answerid={message.answerId}
-            value="pass"
-            onClick={handlePassRejectClick}
-            >
-                Accept
-            </button>
-        const rejectButton = <button
-            className="button secondary review-button"
-            answerid={message.answerId}
-            value="reject"
-            onClick={handlePassRejectClick}
-            >
-                Reject
-            </button>
         return (
             <CSSTransition key={message.questionId} timeout={500} classNames="fade">
                 <tr className="table-row">
@@ -55,14 +37,10 @@ const TeacherMain = (props) => {
                         {message.questionContent}
                     </td>
                     <td className="answer">
-                        <div className="grid-y">
-                            <div>
-                                {message.answerContent}
-                            </div>
-                            <div>
-                                {passButton}{rejectButton}
-                            </div>
-                        </div>
+                        <AnswerTile 
+                            message={message}
+                            handlePassRejectClick={handlePassRejectClick}
+                        />
                     </td>
                 </tr>
             </CSSTransition>
@@ -75,7 +53,7 @@ const TeacherMain = (props) => {
             <table className="message-review-list">
                 <thead>
                 <tr className="table-header">
-                    <th width="300">Question</th>
+                    <th width="25%">Question</th>
                     <th>Answer</th>
                 </tr>
                 </thead>

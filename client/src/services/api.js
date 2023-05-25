@@ -56,10 +56,12 @@ export const postQuestion = async (dialogId, question) => {
     return await fetchData(url, options)
 }
 
-export const patchAnswer = async (answerId, passStatus) => {
+export const patchAnswer = async (answerId, passStatus, answerContent) => {
     const url = `${baseUrl}/messages/${answerId}?pass=${passStatus}`
     const options = {
-        method: "PATCH"
+        method: "PATCH",
+        body: JSON.stringify({ answerContent }),
+        headers: new Headers({"Content-Type": "application/json"})
     }
     return await fetchData(url, options)
 }

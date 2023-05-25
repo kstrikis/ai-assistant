@@ -19,7 +19,7 @@ export const retrieveAnswer = async (question) => {
         model: "gpt-3.5-turbo",
         // model: "gpt-4",
         messages: [
-            { role: "system", content: "promptHintsOnly" },
+            { role: "system", content: promptHintsOnly },
             { role: "user", content: question },
         ]
     })

@@ -16,7 +16,7 @@
 $color-lightpurple: rgb(189, 187, 211);
 
 .home {
-  flex-wrap: nowrap;
+  min-width: 900px;
 }
 
 .subheader {
@@ -53,8 +53,6 @@ $color-lightpurple: rgb(189, 187, 211);
 }
 
 .teacher-main {
-  display: inline-block;
-  justify-content: center;
   margin: 3em;
 }
 
@@ -90,7 +88,7 @@ $color-lightpurple: rgb(189, 187, 211);
   border-collapse: separate;
   border: solid lightgray;
   border-radius: 10px;
-  min-width: 800px;
+  min-width: 600px;
 }
 
 .message-dialog {
@@ -121,11 +119,6 @@ $color-lightpurple: rgb(189, 187, 211);
 .table-header th:last-child {
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
-}
-
-.review-button {
-  display: inline;
-  margin: 5px;
 }
 
 .fade-dialog-exit {
@@ -165,6 +158,12 @@ $color-lightpurple: rgb(189, 187, 211);
 
 .delete-button {
   margin: 0;
+}
+
+.review-button-right {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
 }
 
 .about {
