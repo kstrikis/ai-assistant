@@ -11,7 +11,7 @@ const Home = () => {
                 <h2 className ="subheader">An AI Teaching Assistant</h2>
             </div>
 
-            <article className ="grid-container">
+            <div className ="grid-container">
                 <div className ="grid-x align-center">
                     <div className ="cell small-4">
                         <h3>What is chtAI?</h3>
@@ -27,9 +27,9 @@ const Home = () => {
                         </ol>
                     </div>
                 </div>
-            </article>
+            </div>
 
-            <article className ="grid-container student-signup">
+            <div className ="grid-container student-signup">
                 <div className ="grid-x align-middle align-center">
                     <div className ="cell small-4">
                         <h2>Sign up as a student</h2>
@@ -42,9 +42,9 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            </article>
+            </div>
 
-            <article className ="grid-container teacher-signup">
+            <div className ="grid-container teacher-signup">
                 <div className ="grid-x align-middle align-center">
                     <div className ="cell small-4">
                         <div className ="blog-post">
@@ -59,7 +59,7 @@ const Home = () => {
                         <Link to="/users/new/teacher" className ="button large">Register now!</Link>
                     </div>
                 </div>
-            </article>
+            </div>
             
         </div>
     )
