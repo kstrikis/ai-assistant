@@ -5,6 +5,20 @@ class Dialog extends Model {
         return "dialogs"
     }
 
+    messagesForApi = async () => {
+        const dialogMessages = await this
+            .$relatedQuery("messages")
+            .where('messageType', 'answer')
+            .withGraphFetched('question')
+            .orderBy('id')
+        const formattedMessages = []
+        dialogMessages.map(answer => {
+            formattedMessages.push({ role: "user", content: answer.question.content })
+            formattedMessages.push({ role: "assistant", content: answer.content })
+        })
+        return formattedMessages
+    }
+
     static get jsonSchema() {
         return {
             type: "object",

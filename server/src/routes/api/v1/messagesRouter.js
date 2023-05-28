@@ -61,7 +61,7 @@ messagesRouter.get("/unreviewed", async (req, res) => {
 
 const createAnswer = async (question) => {
     try {
-        const answer = await retrieveAnswer(question.content)
+        const answer = await retrieveAnswer(question)
         const answerObject = {
             content: answer,
             messageType: "answer",
@@ -135,26 +135,10 @@ messagesRouter.patch("/:id", async (req, res) => {
         if (!req.query.pass || !req.body.answerContent) {
             return res.status(400).json({ errors: "parameter missing" })
         }
-        
-        const answer = await Message.query().findOne({ id: id })
-        if (req.query.pass === "pass") {
-            await Message
-                .query()
-                .findOne({ id: id })
-                .patch({ reviewed: true, content: answerContent })
-        } else {
-            await Message
-                .query()
-                .findOne({ id: id })
-                .patch({
-                    reviewed: true,
-                    content: "The answer was rejected. Please rephrase the question and try again."
-                })
-        }
-        await Message
-            .query()
-            .findById(answer.parentMessageId)
-            .patch({ reviewed: true })
+        const rejectedMessage = "The answer was rejected. Please rephrase the question and try again."
+        const newContent = req.query.pass === "pass" ? answerContent : rejectedMessage
+        const answer = await Message.query().patchAndFetchById(id, { reviewed: true, content: newContent })
+        await Message.query().patchAndFetchById(answer.parentMessageId, { reviewed: true })
         return res.status(200).json({ messages: "Answer reviewed successfully" })
     } catch(err) {
         return res.status(500).json({ errors: err.message })

@@ -17,7 +17,7 @@ dialogsRouter.get("/", async (req, res) => {
         }
         
         const userObject = await User.query().findById(userToRetrieve)
-        const dialogs = await userObject.$relatedQuery("dialogs")
+        const dialogs = await userObject.$relatedQuery("dialogs").orderBy('id')
         return res.status(200).json({ dialogs: dialogsForList(dialogs) })
     } catch (err) {
         return res.status(500).json({ errors: err.message })
