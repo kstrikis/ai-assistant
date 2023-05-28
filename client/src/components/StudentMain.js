@@ -8,7 +8,6 @@ import { Link, useHistory } from "react-router-dom";
 const StudentMain = (props) => {
     const [dialogs, setDialogs] = useState([])
     const [messages, setMessages] = useState([])
-    const [noDialogMessage, setNoDialogMessage] = useState("")
     const [errors, setErrors] = useState([])
     const [shouldRefresh, setShouldRefresh] = useState(false)
 
@@ -33,7 +32,6 @@ const StudentMain = (props) => {
             </tr>
         )
     })
-
 
     const showDialogs = dialogs.map((dialogListId, arrayIndex) => {
         const inactive = <Link className="dialog-numbers" to={`/ask/${dialogListId}`} >{arrayIndex+1}</Link>
@@ -70,9 +68,8 @@ const StudentMain = (props) => {
     }
 
     const handleNewDialog = async () => {
-        const response = await createNewDialog()
-        setDialogs(dialogs.concat(response.dialogId))
-        return history.push("/ask/")
+        await createNewDialog()
+        return getDialogs()
     }
     
     const handleAddQuestion = async (question) => {
@@ -130,7 +127,6 @@ const StudentMain = (props) => {
                 {showDialogs}
                 <button className="dialog-numbers" onClick={handleNewDialog}>Make a new dialog</button>
             </ul>
-            {noDialogMessage}
             <div className="messages">
                 <table className="message-dialog">
                     <thead>
