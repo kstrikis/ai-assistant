@@ -5,6 +5,11 @@ class Message extends Model {
         return "messages"
     }
 
+    messagesForApi = async () => {
+        const formattedMessages = await this.$relatedQuery("dialog")
+        return await formattedMessages.messagesForApi()
+    }
+
     static get jsonSchema() {
         return {
             type: "object",
