@@ -37,7 +37,7 @@ class User extends uniqueFunc(Model) {
   }
 
   static get relationMappings() {
-    const { Dialog } = require("./index.js")
+    const { Dialog, Classroom } = require("./index.js")
     return {
       dialogs: {
         relation: Model.HasManyRelation,
@@ -45,6 +45,14 @@ class User extends uniqueFunc(Model) {
         join: {
           from: "users.id",
           to: "dialogs.userId"
+        }
+      },
+      classroom: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Classroom,
+        join: {
+          from: "users.classroomId",
+          to: "classrooms.id"
         }
       }
     }

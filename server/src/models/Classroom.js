@@ -2,7 +2,7 @@ const Model = require("./Model")
 
 class Classroom extends Model {
     static get tableName() {
-        return "classroom"
+        return "classrooms"
     }
     
     static get jsonSchema() {
@@ -29,3 +29,5 @@ class Classroom extends Model {
         }
     }
 }
+
+module.exports = Classroom

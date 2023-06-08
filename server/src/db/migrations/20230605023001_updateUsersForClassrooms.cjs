@@ -7,7 +7,7 @@
  */
 exports.up = async (knex) => {
     return knex.schema.table("users", (table) => {
-        table.bigIncrements("classroomId").unsigned().references("classrooms.id")
+        table.bigInteger("classroomId").unsigned().references("classrooms.id")
     })
 }
 

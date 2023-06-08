@@ -11,7 +11,8 @@ const RegistrationForm = (props) => {
     email: "",
     password: "",
     passwordConfirmation: "",
-    role: defaultRole
+    role: defaultRole,
+    classroomName: ""
   });
 
   const [errors, setErrors] = useState({});
@@ -21,7 +22,7 @@ const RegistrationForm = (props) => {
 
   const validateInput = (payload) => {
     setErrors({});
-    const { email, password, passwordConfirmation } = payload;
+    const { email, password, passwordConfirmation, classroomName, role } = payload;
     const emailRegexp = config.validation.email.regexp.emailRegex;
     let newErrors = {};
 
@@ -51,6 +52,13 @@ const RegistrationForm = (props) => {
           passwordConfirmation: "does not match password",
         };
       }
+    }
+
+    if (classroomName.trim() == "" && role === "teacher") {
+      newErrors = {
+        ...newErrors,
+        classroomName: "is required",
+      };
     }
 
     setErrors(newErrors);
@@ -169,6 +177,18 @@ const RegistrationForm = (props) => {
             <label htmlFor="roleTeacher">Teacher</label>
             <FormError error={errors.role} />
           </fieldset>
+        </div>
+        <div className={ (userPayload.role === "student") && `hide` }>
+          <label>
+            New Classroom Name
+            <input
+              type="text"
+              name="classroomName"
+              value={userPayload.classroomName}
+              onChange={onInputChange}
+            />
+            <FormError error={errors.classroomName} />
+          </label>
         </div>
         <div>
           <input type="submit" className="button" value="Register" />
