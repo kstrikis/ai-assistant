@@ -1,50 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ErrorList from "../layout/ErrorList"
 import FormError from "../layout/FormError";
 import config from "../../config";
 import translateServerErrors from "../../services/translateServerErrors";
+import { fetchClassrooms } from "../../services/api";
 
 const RegistrationForm = (props) => {
   const paramsRole = props.match.params.role
-  const defaultRole = paramsRole ? paramsRole : "student"
+  const defaultRole = paramsRole ? paramsRole : ""
   const [userPayload, setUserPayload] = useState({
     email: "",
     password: "",
     passwordConfirmation: "",
     role: defaultRole,
+    classroomId: null,
     classroomName: ""
-  });
+  })
+  const [errors, setErrors] = useState({})
+  const [serverErrors, setServerErrors] = useState({})
+  const [shouldRedirect, setShouldRedirect] = useState(false)
+  const [classrooms, setClassrooms] = useState([])
 
-  const [errors, setErrors] = useState({});
-  const [serverErrors, setServerErrors] = useState({});
+  const getClassrooms = async () => {
+    const retrievedClassrooms = await fetchClassrooms()
+    setClassrooms(retrievedClassrooms.classrooms)
+  }
 
-  const [shouldRedirect, setShouldRedirect] = useState(false);
+  useEffect(() => {
+    getClassrooms()
+  }, [])
 
   const validateInput = (payload) => {
     setErrors({});
-    const { email, password, passwordConfirmation, classroomName, role } = payload;
+    const { email, password, passwordConfirmation, classroomId, classroomName, role } = payload;
     const emailRegexp = config.validation.email.regexp.emailRegex;
     let newErrors = {};
-
+    
     if (!email.match(emailRegexp)) {
       newErrors = {
         ...newErrors,
         email: "is invalid",
-      };
+      }
     }
-
+    
     if (password.trim() == "") {
       newErrors = {
         ...newErrors,
         password: "is required",
-      };
+      }
     }
-
+    
     if (passwordConfirmation.trim() === "") {
       newErrors = {
         ...newErrors,
         passwordConfirmation: "is required",
-      };
+      }
     } else {
       if (passwordConfirmation !== password) {
         newErrors = {
@@ -53,21 +63,28 @@ const RegistrationForm = (props) => {
         };
       }
     }
-
-    if (classroomName.trim() == "" && role === "teacher") {
+    
+    if (!classroomId && role === "student") {
       newErrors = {
         ...newErrors,
-        classroomName: "is required",
+        classroomId: "must choose a classroom",
       };
     }
 
+    if (classroomName.trim() === "" && role === "teacher") {
+      newErrors = {
+        ...newErrors,
+        classroomName: "new class name is required",
+      };
+    }
+    
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
       return true
     }
     return false
   };
-
+  
   const onSubmit = async (event) => {
     event.preventDefault();
     if (validateInput(userPayload)) {
@@ -97,18 +114,26 @@ const RegistrationForm = (props) => {
       }
     }
   };
-
+  
   const onInputChange = (event) => {
-    setUserPayload({
-      ...userPayload,
-      [event.currentTarget.name]: event.currentTarget.value,
-    });
+    if (event.currentTarget.name === "role" && event.currentTarget.value === "teacher") {
+      setUserPayload({
+        ...userPayload,
+        [event.currentTarget.name]: event.currentTarget.value,
+        "classroomId": null
+      })
+    } else (
+      setUserPayload({
+        ...userPayload,
+        [event.currentTarget.name]: event.currentTarget.value,
+        })
+    )
   };
-
+  
   if (shouldRedirect) {
     location.href = "/";
   }
-
+  
   let registrationWelcome = ""
   if (paramsRole === "student") {
     registrationWelcome = "Students: "
@@ -116,8 +141,27 @@ const RegistrationForm = (props) => {
   if (paramsRole === "teacher") {
     registrationWelcome = "Teachers: "
   }
-  const roleHide = (paramsRole === "student" || paramsRole === "teacher") ? "hide" : ""
+  const hasRoleHide = (paramsRole === "student" || paramsRole === "teacher") ? "hide" : ""
+  const isStudentHide = (userPayload.role === "student" || !userPayload.role) ? "hide" : ""
+  const isTeacherHide = (userPayload.role === "teacher" || !userPayload.role) ? "hide" : ""
 
+  const classroomDropdown = (
+    <div className={`${isTeacherHide}`}>
+      Select a classroom to join:
+      <select name="classroomId" onChange={onInputChange}>
+        <option key="none" value={null} name="classroomId">
+        </option>
+        {classrooms.map(classroom => {
+          return(
+            <option key={classroom.id} value={classroom.id}>
+              {classroom.name}
+            </option>
+            )
+          })}
+      </select>
+    </div>
+  )
+  
   return (
     <div className="grid-container">
       <h1>{registrationWelcome}Get started now!</h1>
@@ -157,7 +201,7 @@ const RegistrationForm = (props) => {
           </label>
         </div>
         <div>
-          <fieldset className={`${roleHide}`}>
+          <fieldset className={`${hasRoleHide}`}>
             <legend>Role</legend>
             <input
               type="radio"
@@ -178,7 +222,7 @@ const RegistrationForm = (props) => {
             <FormError error={errors.role} />
           </fieldset>
         </div>
-        <div className={ (userPayload.role === "student") && `hide` }>
+        <div className={`${isStudentHide}`}>
           <label>
             New Classroom Name
             <input
@@ -190,6 +234,8 @@ const RegistrationForm = (props) => {
             <FormError error={errors.classroomName} />
           </label>
         </div>
+        {classroomDropdown}
+        <FormError error={errors.classroomId} />
         <div>
           <input type="submit" className="button" value="Register" />
         </div>
