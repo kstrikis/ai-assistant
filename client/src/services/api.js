@@ -65,3 +65,7 @@ export const patchAnswer = async (answerId, passStatus, answerContent) => {
     }
     return await fetchData(url, options)
 }
+
+export const fetchClassrooms = async () => {
+    return await fetchData(`${baseUrl}/classrooms`)
+}
