@@ -176,3 +176,10 @@ $color-lightpurple: rgb(189, 187, 211);
 .navlogo {
   height: 40px;
 }
+
+.navtext {
+  @extend .menu;
+  @extend a;
+  cursor: default;
+  pointer-events: none;
+}

@@ -47,6 +47,12 @@ const TopBar = ({ user }) => {
           <li>
             <Link to="/about">About</Link>
           </li>
+          <li key="email">
+            <span className="navtext"> {user ? user.email : false} </span>
+          </li>
+          <li key="role">
+            <span className="navtext"> {user ? user.role : false} </span>
+          </li>
         </ul>
       </div>
       <div className="top-bar-right">
