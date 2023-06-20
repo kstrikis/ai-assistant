@@ -11,6 +11,7 @@ import StudentMain from "./StudentMain";
 import TeacherMain from "./TeacherMain";
 import Home from "./Home";
 import About from "./About";
+import Demo from "./Demo";
 
 const App = (props) => {
   const [currentUser, setCurrentUser] = useState(undefined);
@@ -38,6 +39,7 @@ const App = (props) => {
         <Route exact path="/users/new/:role" component={RegistrationForm} />
         <Route exact path="/user-sessions/new" component={SignInForm} />
         <Route exact path="/about" component={About} />
+        <Route exact path="/demo" component={Demo} />
         <Route exact path="/" component={Home} />
       </Switch>
     </Router>
