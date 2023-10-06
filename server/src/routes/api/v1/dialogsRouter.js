@@ -9,15 +9,18 @@ dialogsRouter.get("/", async (req, res) => {
         if (!req.user) {
             return res.status(401).json({ errors: "must be logged in" })
         }
-        
+        console.log("begin get")
         const requestingUser = parseInt(req.user.id)
         const userToRetrieve = req.query.user_id ? parseInt(req.query.user_id) : requestingUser
         if ( (requestingUser !== userToRetrieve) && (req.user.role !== "teacher") ) {
             return res.status(403).json({ errors: "forbidden" })
         }
         
+        console.log("finding user object")
         const userObject = await User.query().findById(userToRetrieve)
+        console.log("finding related dialogs")
         const dialogs = await userObject.$relatedQuery("dialogs").orderBy('id')
+        console.log("returning dialogs")
         return res.status(200).json({ dialogs: dialogsForList(dialogs) })
     } catch (err) {
         return res.status(500).json({ errors: err.message })
