@@ -48,14 +48,14 @@ messagesRouter.get("/unreviewed", async (req, res) => {
             return res.status(403).json({ errors: "forbidden" })
         }
 
-        const teacherClassroomId = req.user.classroomId
+        // const teacherClassroomId = req.user.classroomId
         const answers = await Message
             .query()
             .join('dialogs', 'messages.dialogId', 'dialogs.id')
             .join('users', 'dialogs.userId', 'users.id')
             .where('messageType', 'answer')
             .andWhere('reviewed', false)
-            .andWhere('users.classroomId', teacherClassroomId)
+            // .andWhere('users.classroomId', teacherClassroomId)
             .withGraphFetched('question')
             .select('messages.*')
 
